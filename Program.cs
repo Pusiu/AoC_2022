@@ -8,7 +8,6 @@ namespace AoC_2022
             var days = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(x => typeof(Day).IsAssignableFrom(x) && !x.IsAbstract).Select(x => Activator.CreateInstance(x) as Day).ToList();
-
             days[days.Count-1].Run();
             //days[0].Run();
 
