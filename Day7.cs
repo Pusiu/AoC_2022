@@ -6,7 +6,7 @@ namespace AoC_2022
     {
         public override string Part1()
         {
-            return  CreateFilesystem().GetDirectoriesBySize(100000).Sum(x => x.size).ToString();
+            return CreateFilesystem().GetDirectoriesBySize(100000).Sum(x => x.size).ToString();
         }
 
         Directory CreateFilesystem()
@@ -17,7 +17,12 @@ namespace AoC_2022
             {
                 if (line[0] == '$')
                 {
-                    (string command, string parameter) = line.Split(" ") switch { var a => a.Length >= 3 ? (a[1], a[2]) : (a[1], "") };
+                    (string command, string parameter) = line.Split(" ") switch
+                    {
+                        [_, var c, var p] => (c, p),
+                        [_, var c] => (c, ""),
+                        _ => default
+                    };
                     switch (command)
                     {
                         case "cd":
@@ -42,14 +47,11 @@ namespace AoC_2022
                                 currentDirectory = currentDirectory.parent;
                             }
                             break;
-                        case "ls":
-
-                            break;
                     }
                 }
                 else
                 {
-                    (string nfo, string name) = line.Split(" ") switch { var a => (a[0], a[1]) };
+                    (string nfo, string name) = line.Split(" ") switch { [var i, var n] => (i, n) };
                     if (nfo == "dir")
                     {
                         currentDirectory.AddFile(new Directory(name, currentDirectory));
@@ -66,12 +68,12 @@ namespace AoC_2022
 
         public override string Part2()
         {
-            long totalDiskSpace=70000000;
-            long desiredFreeSpace=30000000;
+            long totalDiskSpace = 70000000;
+            long desiredFreeSpace = 30000000;
             List<Directory> allDirs = CreateFilesystem().GetDirectoriesBySize(totalDiskSpace);
-            long currentlyUsedSpace=allDirs.First().size;
+            long currentlyUsedSpace = allDirs.First().size;
 
-            return allDirs.Where(x => totalDiskSpace-(currentlyUsedSpace-x.size) >= desiredFreeSpace).OrderBy(x => x.size).First().size.ToString();
+            return allDirs.Where(x => totalDiskSpace - (currentlyUsedSpace - x.size) >= desiredFreeSpace).OrderBy(x => x.size).First().size.ToString();
         }
 
         class File
